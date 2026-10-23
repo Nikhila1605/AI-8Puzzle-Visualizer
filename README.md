@@ -12,8 +12,8 @@ An interactive web application that solves the 8-puzzle with **Breadth-First Sea
 | **Slot** | C1+TC1 |
 | **Faculty** | Nagaraja G |
 | **Assigned algorithm** | Algorithm 1 – Breadth-First Search (BFS) |
-| **Live website** | `https://<your-username>.github.io/AI-8Puzzle-Visualizer/` |
-| **Repository** | `https://github.com/<your-username>/AI-8Puzzle-Visualizer` |
+| **Live website** | `https://Nikhila1605.github.io/AI-8Puzzle-Visualizer/` |
+| **Repository** | `https://github.com/Nikhila1605/AI-8Puzzle-Visualizer` |
 | **Demo video** | `[link to your 3–5 minute video]` |
 
 ![Search process view](assets/images/screenshot-search.png)
