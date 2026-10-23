@@ -14,7 +14,7 @@ An interactive web application that solves the 8-puzzle with **Breadth-First Sea
 | **Assigned algorithm** | Algorithm 1 – Breadth-First Search (BFS) |
 | **Live website** | `https://Nikhila1605.github.io/AI-8Puzzle-Visualizer/` |
 | **Repository** | `https://github.com/Nikhila1605/AI-8Puzzle-Visualizer` |
-| **Demo video** | `[link to your 3–5 minute video]` |
+| **Demo video** | `https://drive.google.com/file/d/1xPa7auU-XhY8a-Yqkodu-J6Qc2q1N3jd/view?usp=sharing` |
 
 ![Search process view](assets/images/screenshot-search.png)
 
@@ -24,7 +24,7 @@ An interactive web application that solves the 8-puzzle with **Breadth-First Sea
 
 To model the 8-puzzle as a state-space search problem, implement BFS without any search library, and build a visual tool that shows *how* BFS explores states level by level and why it returns a minimum-move solution.
 
-**Scope.** The assignment allots one algorithm per registration number, and 24BCE2690 is allotted Algorithm 1 (BFS). Only BFS is implemented. The other algorithms appear in the algorithm selector as disabled ("not assigned") and in a clearly labelled *theoretical* comparison table. No results for other algorithms are measured or invented.
+**Scope.** The assignment allotted is Algorithm 1 (BFS) which is implemented. The other algorithms appear in the algorithm selector as disabled ("not assigned") and in a clearly labelled *theoretical* comparison table. No results for other algorithms are measured or invented.
 
 ## Technologies used
 
@@ -92,7 +92,7 @@ BFS is uninformed and uses **no heuristic**. The comparison page displays the *M
 | Max search depth | Depth of the deepest node generated |
 | Path cost | Number of moves (each move costs 1) |
 | Execution time | `performance.now()` around the search only, not the animation. Browsers round this timer (often to 0.1 ms), so tiny searches show "< 0.1 ms" |
-| Memory (approx.) | Stored nodes × 200 bytes. The 200 B figure was measured in V8 (Node 22) with `tests/measure-memory.js` (≈199 B per node incl. the `Map` entry). It is an estimate, not a browser reading |
+| Memory (approx.) | Stored nodes × 200 bytes. The 200 B figure was measured in V8 (Node 22) with `tests/measure-memory.js` (≈199 B per node incl. the `Map` entry). It is an estimate |
 
 ## Complexity
 
@@ -202,8 +202,7 @@ The user interface was tested in headless Chromium (39 scripted checks): navigat
 
 - **Bootstrap 5.3.8** – © The Bootstrap Authors, MIT licence (copy in `assets/vendor/bootstrap/LICENSE`).
 - **Fraunces** (© The Fraunces Project Authors) and **IBM Plex Sans / Mono** (© IBM Corp.) – SIL Open Font Licence 1.1, font files taken from the Fontsource packages; licences in `assets/vendor/fonts/`.
-- All other code, the favicon and the screenshots were created for this project. No search or puzzle-solving library is used.
-- AI assistance: `[state here, if your course requires it, how you used AI tools while building this project]`
+
 
 ---
 *Submitted by Nikhila Abdul Salam (24BCE2690) for the Artificial Intelligence digital assignment.*
