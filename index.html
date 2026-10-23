@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BFS 8-Puzzle Visualizer</title>
+  <meta name="description" content="Interactive 8-Puzzle solver using Breadth-First Search - AI digital assignment, 24BCE2690">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+
+  <!-- Bootstrap 5.3.8 is stored inside the project so the site also works offline -->
+  <link rel="stylesheet" href="assets/vendor/bootstrap/bootstrap.min.css">
+  <!-- Fonts are stored inside the project (no internet needed) -->
+  <link rel="stylesheet" href="assets/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ================= NAVIGATION ================= -->
+<nav class="navbar navbar-expand-md sticky-top site-nav">
+  <div class="container">
+    <a class="navbar-brand" href="#home"><span class="brand-mark">B</span>BFS 8-Puzzle</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#home" data-page="home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#solver" data-page="solver">Solver</a></li>
+        <li class="nav-item"><a class="nav-link" href="#algorithm" data-page="algorithm">Algorithm</a></li>
+        <li class="nav-item"><a class="nav-link" href="#comparison" data-page="comparison">Comparison</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ================= HOME ================= -->
+<section id="page-home" class="page">
+  <div class="container py-4 py-lg-5">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-7">
+        <p class="eyebrow">Artificial Intelligence &middot; Digital Assignment</p>
+        <h1 class="display-title">Interactive 8-Puzzle Problem Solver<br><span class="muted-title">using Breadth-First Search</span></h1>
+
+        <dl class="id-card">
+          <div><dt>Course</dt><dd>BCSE306L &ndash; Artificial Intelligence</dd></div>
+          <div><dt>Student</dt><dd id="studentName">Nikhila Abdul Salam</dd></div>
+          <div><dt>Registration No.</dt><dd id="regNo">24BCE2690</dd></div>
+          <div><dt>Slot</dt><dd>C1+TC1</dd></div>
+          <div><dt>Faculty</dt><dd>Nagaraja G</dd></div>
+          <div><dt>Assigned algorithm</dt><dd>Algorithm 1 &mdash; Breadth-First Search (BFS)</dd></div>
+        </dl>
+
+        <h2 class="section-title">The 8-Puzzle problem</h2>
+        <p>The 8-puzzle is a 3 &times; 3 frame holding eight numbered tiles and one empty square. A tile next to the
+          empty square can slide into it. Starting from a scrambled <strong>initial state</strong>, the task is to reach
+          a chosen <strong>goal state</strong> using as few slides as possible.</p>
+        <p>In AI it is treated as a <strong>state-space search</strong> problem: every arrangement of the tiles is a
+          <em>state</em>, each slide is an <em>action</em> costing 1, and the solver must find a sequence of actions that
+          leads from the initial state to the goal. It is simpler to think of the blank as the thing that moves
+          (Up, Down, Left or Right), so a state has 2, 3 or 4 successors depending on where the blank is.</p>
+        <p>Of the 9! = 362,880 possible arrangements, only half can reach any given goal, so each search space has
+          181,440 reachable states. This site solves the puzzle with <strong>Breadth-First Search</strong>, which looks at
+          all states one move away, then all states two moves away, and so on, and therefore returns a solution with the
+          minimum number of moves.</p>
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <a href="#solver" class="btn btn-ink">Open the solver</a>
+          <a href="#algorithm" class="btn btn-outline-ink">How BFS works</a>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="paper-card">
+          <h2 class="card-heading">Assignment example</h2>
+          <div class="pair-row">
+            <figure><div class="board-static" data-state="283164705"></div><figcaption>Initial state</figcaption></figure>
+            <span class="pair-arrow" aria-hidden="true">&rarr;</span>
+            <figure><div class="board-static" data-state="123804765"></div><figcaption>Goal state</figcaption></figure>
+          </div>
+          <h3 class="card-subheading mt-4">BFS sees it layer by layer</h3>
+          <p class="small text-secondary mb-2">Generated live by the same successor function the solver uses. Repeated
+            states are left out.</p>
+          <div id="layerPreview" class="layer-preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-2">
+      <div class="col-md-6 col-lg-3"><div class="how-step"><span>1</span><p>Type an initial and goal state, load the example, or generate a random solvable puzzle.</p></div></div>
+      <div class="col-md-6 col-lg-3"><div class="how-step"><span>2</span><p>Press <strong>Run BFS</strong>. Inputs are validated and checked for solvability first.</p></div></div>
+      <div class="col-md-6 col-lg-3"><div class="how-step"><span>3</span><p>Watch the search: current node, successors, frontier queue and explored list, one expansion at a time.</p></div></div>
+      <div class="col-md-6 col-lg-3"><div class="how-step"><span>4</span><p>Replay the shortest solution with the sliding-tile animation and read the summary.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOLVER ================= -->
+<section id="page-solver" class="page" hidden>
+  <div class="container py-4">
+    <div class="row g-4">
+
+      <!-- ---------- Input panel ---------- -->
+      <div class="col-lg-4">
+        <div class="paper-card">
+          <h2 class="card-heading">1. Puzzle input</h2>
+
+          <div class="input-boards">
+            <div>
+              <label class="board-label" for="start-0">Initial state</label>
+              <div class="grid-input" id="startInput" data-name="start"></div>
+            </div>
+            <div>
+              <label class="board-label" for="goal-0">Goal state</label>
+              <div class="grid-input" id="goalInput" data-name="goal"></div>
+            </div>
+          </div>
+          <p class="hint">Numbers 1&ndash;8, leave one cell empty (or type 0 or _) for the blank.</p>
+
+          <div class="btn-row">
+            <button class="btn btn-sm btn-outline-ink" id="btnExample" type="button">Load example</button>
+            <button class="btn btn-sm btn-outline-ink" id="btnSwapGoal" type="button" title="Switch goal layout">Goal: spiral</button>
+            <button class="btn btn-sm btn-outline-ink" id="btnClear" type="button">Clear</button>
+          </div>
+
+          <div class="random-box">
+            <label for="randomMode" class="form-label small fw-semibold mb-1">Random solvable puzzle</label>
+            <select class="form-select form-select-sm" id="randomMode">
+              <option value="8">Easy (scramble 8 moves)</option>
+              <option value="15" selected>Medium (scramble 15 moves)</option>
+              <option value="25">Hard (scramble 25 moves)</option>
+              <option value="any">Any solvable arrangement</option>
+            </select>
+            <div class="d-grid mt-2">
+              <button class="btn btn-sm btn-clay" id="btnRandom" type="button">Generate Random Puzzle</button>
+            </div>
+          </div>
+
+          <h2 class="card-heading mt-4">2. Algorithm</h2>
+          <label for="algorithmSelect" class="visually-hidden">Search algorithm</label>
+          <select class="form-select" id="algorithmSelect">
+            <option value="bfs" selected>Breadth-First Search (BFS)</option>
+            <option disabled>DFS &mdash; not assigned to 24BCE2690</option>
+            <option disabled>DLS &mdash; not assigned to 24BCE2690</option>
+            <option disabled>IDDLS &mdash; not assigned to 24BCE2690</option>
+            <option disabled>GBFS &mdash; not assigned to 24BCE2690</option>
+            <option disabled>A* &mdash; not assigned to 24BCE2690</option>
+          </select>
+          <p class="hint">Each student implements only the algorithm allotted to their registration number. BFS needs no
+            depth limit and no heuristic.</p>
+
+          <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="skipCheck">
+            <label class="form-check-label small" for="skipCheck">Let BFS run on unsolvable input (to see "Not Found")</label>
+          </div>
+
+          <div id="inputMessage" class="input-message" role="alert" aria-live="polite"></div>
+
+          <div class="d-grid mt-3">
+            <button class="btn btn-ink btn-lg" id="btnRun" type="button">Run BFS</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- Visualization ---------- -->
+      <div class="col-lg-8">
+        <div class="paper-card">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <h2 class="card-heading mb-0">3. Visualization</h2>
+            <div class="phase-tabs" role="tablist" aria-label="Playback mode">
+              <button type="button" role="tab" class="phase-tab active" id="tabSearch" aria-selected="true">Search process</button>
+              <button type="button" role="tab" class="phase-tab" id="tabSolution" aria-selected="false">Solution path</button>
+            </div>
+          </div>
+
+          <!-- Initial / Goal / Current always visible -->
+          <div class="trio">
+            <figure><div class="board-mini" id="trioStart"></div><figcaption>Initial</figcaption></figure>
+            <figure><div class="board-mini" id="trioGoal"></div><figcaption>Goal</figcaption></figure>
+            <figure><div class="board-mini current" id="trioCurrent"></div><figcaption id="trioCurrentLabel">Current</figcaption></figure>
+          </div>
+
+          <!-- Controls -->
+          <div class="controls">
+            <div class="ctrl-buttons" role="group" aria-label="Playback controls">
+              <button class="btn btn-sm btn-ctrl" id="btnPlay" type="button" disabled>Run</button>
+              <button class="btn btn-sm btn-ctrl" id="btnPause" type="button" disabled>Pause</button>
+              <button class="btn btn-sm btn-ctrl" id="btnResume" type="button" disabled>Resume</button>
+              <button class="btn btn-sm btn-ctrl" id="btnPrev" type="button" disabled>&#9664; Previous</button>
+              <button class="btn btn-sm btn-ctrl" id="btnNext" type="button" disabled>Next &#9654;</button>
+              <button class="btn btn-sm btn-ctrl" id="btnReset" type="button" disabled>Reset</button>
+            </div>
+            <div class="speed">
+              <label for="speed" class="small">Speed</label>
+              <input type="range" class="form-range" id="speed" min="1" max="10" value="5">
+              <span id="speedLabel" class="small mono">300 ms</span>
+            </div>
+          </div>
+          <div class="scrub">
+            <input type="range" class="form-range" id="scrubber" min="0" max="0" value="0" disabled aria-label="Jump to step">
+            <span id="stepLabel" class="mono small">No search yet</span>
+          </div>
+
+          <div id="emptyState" class="empty-state">
+            <div class="board-static" data-state="283164705"></div>
+            <p>Enter a puzzle and press <strong>Run BFS</strong>. The search is computed first, then replayed here one
+              expansion at a time.</p>
+          </div>
+
+          <!-- Search process view -->
+          <div id="searchView" hidden>
+            <div class="expand-row">
+              <div class="expand-main">
+                <div class="tag tag-current">Expanding node #<span id="curIndex">0</span></div>
+                <div class="board-static board-lg" id="curBoard"></div>
+                <div class="node-facts mono">
+                  <span>depth <b id="curDepth">0</b></span>
+                  <span>g(n) = <b id="curCost">0</b></span>
+                  <span>move <b id="curMove">&ndash;</b></span>
+                </div>
+              </div>
+              <div class="expand-side">
+                <div class="mini-heading">Parent node</div>
+                <div id="parentBox" class="parent-box"></div>
+                <div class="mini-heading mt-3">Successors generated <span class="legend"><i class="lg-new"></i>new <i class="lg-repeat"></i>repeat <i class="lg-goal"></i>goal</span></div>
+                <div id="childrenBox" class="children-box"></div>
+              </div>
+            </div>
+
+            <div class="live-stats" id="liveStats"></div>
+
+            <div class="queue-block">
+              <div class="mini-heading">Frontier &mdash; FIFO queue (open list) <span class="count" id="frontierCount">0</span></div>
+              <div class="queue-strip" id="frontierStrip"></div>
+            </div>
+            <div class="queue-block">
+              <div class="mini-heading">Explored (closed list), most recent first <span class="count" id="exploredCount">0</span></div>
+              <div class="queue-strip" id="exploredStrip"></div>
+            </div>
+          </div>
+
+          <!-- Solution path view -->
+          <div id="solutionView" hidden>
+            <div class="solution-row">
+              <div class="solution-main">
+                <div class="tag tag-goal" id="solTag">Step 0</div>
+                <div class="board-anim" id="animBoard"></div>
+                <p class="mono small text-center mt-2" id="solMoveText">Initial state</p>
+              </div>
+              <ol class="path-list" id="pathList"></ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="paper-card mt-4" id="summaryCard" hidden>
+          <h2 class="card-heading">4. Solution summary</h2>
+          <div class="summary-grid" id="summaryGrid"></div>
+          <p class="hint mt-2 mb-0">Time is measured with <code>performance.now()</code> around the search only (not the
+            animation). Memory is an estimate: stored nodes &times; ~200 bytes, a figure measured in Chrome's V8 engine.
+            See the Algorithm page for how each number is counted.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ALGORITHM ================= -->
+<section id="page-algorithm" class="page" hidden>
+  <div class="container py-4 py-lg-5 prose-page">
+    <p class="eyebrow">Algorithm information</p>
+    <h1 class="display-title">Breadth-First Search</h1>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <h2 class="section-title">Description</h2>
+        <p>Breadth-First Search is an <strong>uninformed</strong> (blind) search strategy: it uses only the problem
+          definition and has no estimate of how close a state is to the goal. It expands the shallowest unexpanded node
+          first, so the search grows outward in layers &mdash; every state at depth 1, then every state at depth 2, and so
+          on.</p>
+
+        <h2 class="section-title">Working principle</h2>
+        <p>The order comes from the data structure. BFS keeps its <strong>frontier</strong> in a FIFO (first-in,
+          first-out) queue. Newly generated children join the back; the node taken out for expansion always comes from the
+          front. Since all depth-<em>k</em> nodes enter the queue before any depth-<em>k</em>+1 node, they also leave
+          first.</p>
+        <p>For the 8-puzzle, different move sequences often lead to the same board, so the program also keeps a
+          <strong>visited</strong> set. A state is added to it as soon as it is generated; any later copy is skipped.
+          Each stored node remembers its <strong>parent</strong>, so once the goal is found the path is rebuilt by
+          following parents back to the start.</p>
+
+        <h3 class="sub-title">Pseudocode (as implemented in <code>js/bfs.js</code>)</h3>
+<pre class="code-block"><code>BFS(start, goal)
+  nodes   &larr; [ node(start, parent = none, depth = 0) ]
+  visited &larr; { start }
+  if start = goal: return path(start)
+  head &larr; 0                             // front of the FIFO queue
+  while head &lt; length(nodes):
+      current &larr; nodes[head]; head &larr; head + 1      // dequeue
+      for each (state, move) in SUCCESSORS(current):
+          if state in visited: continue  // repeated state
+          child &larr; node(state, parent = current, depth = current.depth + 1)
+          append child to nodes; add state to visited     // enqueue
+          if state = goal: return PATH(child)            // early goal test
+  return failure                         // frontier empty</code></pre>
+
+        <h3 class="sub-title">How the numbers are counted</h3>
+        <ul class="tight">
+          <li><strong>Generated</strong> &ndash; the start node plus every successor created by a legal move, including
+            repeats that were then skipped.</li>
+          <li><strong>Expanded</strong> &ndash; nodes taken from the front of the queue whose successors were generated.
+            The goal is tested when generated, so it is never expanded.</li>
+          <li><strong>Frontier / Explored</strong> &ndash; the nodes still waiting in the queue / the nodes already
+            expanded. Together they are the visited set.</li>
+          <li><strong>Depth = path cost g(n)</strong> &ndash; every move costs 1. Max depth is the deepest node
+            generated.</li>
+          <li><strong>Memory (approx.)</strong> &ndash; BFS keeps every stored node until the end (needed to rebuild the
+            path), so memory &asymp; stored nodes &times; ~200 bytes.</li>
+        </ul>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="paper-card">
+          <h2 class="card-heading">Properties</h2>
+          <table class="table table-sm prop-table mb-2">
+            <tbody>
+              <tr><th>Completeness</th><td>Yes &ndash; if a solution exists at finite depth and the branching factor is finite</td></tr>
+              <tr><th>Optimality</th><td>Yes, when every action has the same cost (true here: each move costs 1)</td></tr>
+              <tr><th>Time complexity</th><td><span class="mono">O(b<sup>d</sup>)</span> nodes generated</td></tr>
+              <tr><th>Space complexity</th><td><span class="mono">O(b<sup>d</sup>)</span> &ndash; frontier and explored nodes are kept</td></tr>
+            </tbody>
+          </table>
+          <p class="small text-secondary mb-0"><span class="mono">b</span> = branching factor (2, 3 or 4 for the
+            8-puzzle depending on the blank's position, roughly 3 on average), <span class="mono">d</span> = depth of the
+            shallowest solution. With repeated states removed, the search can never store more than the 181,440 reachable
+            states.</p>
+        </div>
+
+        <div class="paper-card mt-4">
+          <h2 class="card-heading">Advantages</h2>
+          <ul class="tight mb-3">
+            <li>Always finds a solution when one exists.</li>
+            <li>The first solution found has the fewest moves.</li>
+            <li>Simple to implement and to explain: one queue, one visited set.</li>
+          </ul>
+          <h2 class="card-heading">Limitations</h2>
+          <ul class="tight mb-0">
+            <li>Memory grows as fast as time &ndash; every generated state is kept.</li>
+            <li>No sense of direction: it explores many states that move away from the goal.</li>
+            <li>Becomes impractical on larger puzzles (the 15-puzzle has about 10<sup>13</sup> reachable states).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title mt-4">Why BFS is optimal here (short argument)</h2>
+    <p>BFS removes nodes from the queue in non-decreasing order of depth. Suppose the shortest solution has <em>d</em>
+      moves. Every node at depth <em>d</em>&minus;1 is expanded before any node at depth <em>d</em>, so the goal is
+      generated while expanding depth-(<em>d</em>&minus;1) nodes, before any deeper node exists. Skipping a repeated
+      state is safe because the copy already stored was reached at the same or a smaller depth. Since every move costs
+      1, fewest moves also means lowest path cost.</p>
+
+    <h2 class="section-title">Solvability check</h2>
+    <p>Write the tiles in reading order without the blank and count the <strong>inversions</strong> (pairs where a
+      larger number comes before a smaller one). On a 3-wide board a left/right move does not change this order, and an
+      up/down move makes one tile jump over exactly two others, changing the count by &minus;2, 0 or +2. So the
+      <em>parity</em> (odd/even) of the inversion count never changes. The initial state can reach the goal exactly when
+      both have the same parity; the app checks this before searching.</p>
+  </div>
+</section>
+
+<!-- ================= COMPARISON ================= -->
+<section id="page-comparison" class="page" hidden>
+  <div class="container py-4 py-lg-5">
+    <p class="eyebrow">Comparison</p>
+    <h1 class="display-title">BFS performance &amp; search strategies</h1>
+
+    <div class="paper-card mt-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h2 class="card-heading mb-0">A. Measured BFS runs (this session)</h2>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-ink" id="btnBenchmark" type="button">Run benchmark set</button>
+          <button class="btn btn-sm btn-outline-ink" id="btnClearHistory" type="button">Clear</button>
+        </div>
+      </div>
+      <p class="hint">Every puzzle solved on the Solver page is added here. The benchmark set solves fixed puzzles of
+        increasing difficulty so you can see how BFS grows with solution depth.</p>
+      <div class="table-responsive">
+        <table class="table table-sm data-table align-middle" id="historyTable">
+          <thead>
+            <tr><th>#</th><th>Initial &rarr; Goal</th><th>Found</th><th>Moves</th><th>Generated</th><th>Expanded</th>
+              <th>Max depth</th><th>Peak frontier</th><th>Time (ms)</th><th>Memory (approx.)</th></tr>
+          </thead>
+          <tbody id="historyBody"><tr><td colspan="10" class="text-secondary">No runs yet.</td></tr></tbody>
+        </table>
+      </div>
+      <div id="growthChart" class="growth-chart" hidden></div>
+    </div>
+
+    <div class="paper-card mt-4">
+      <h2 class="card-heading">B. Theoretical comparison of the six strategies (not measured)</h2>
+      <div class="table-responsive">
+        <table class="table table-sm data-table">
+          <thead><tr><th>Algorithm</th><th>Type</th><th>Complete?</th><th>Optimal (fewest moves)?</th><th>Time</th><th>Space</th><th>In this project</th></tr></thead>
+          <tbody>
+            <tr class="row-bfs"><td><b>BFS</b></td><td>Uninformed</td><td>Yes</td><td>Yes (unit cost)</td><td class="mono">O(b<sup>d</sup>)</td><td class="mono">O(b<sup>d</sup>)</td><td><b>Implemented</b></td></tr>
+            <tr><td>DFS</td><td>Uninformed</td><td>No in general; yes on a finite space with repeated-state checking</td><td>No</td><td class="mono">O(b<sup>m</sup>)</td><td class="mono">O(bm)</td><td>Not assigned</td></tr>
+            <tr><td>DLS</td><td>Uninformed</td><td>No (fails if &ell; &lt; d)</td><td>No</td><td class="mono">O(b<sup>&ell;</sup>)</td><td class="mono">O(b&ell;)</td><td>Not assigned</td></tr>
+            <tr><td>IDDLS</td><td>Uninformed</td><td>Yes</td><td>Yes (unit cost)</td><td class="mono">O(b<sup>d</sup>)</td><td class="mono">O(bd)</td><td>Not assigned</td></tr>
+            <tr><td>GBFS</td><td>Informed</td><td>Yes on finite spaces with repeated-state checking</td><td>No</td><td class="mono">O(b<sup>m</sup>) worst case</td><td class="mono">O(b<sup>m</sup>) worst case</td><td>Not assigned</td></tr>
+            <tr><td>A*</td><td>Informed</td><td>Yes</td><td>Yes with an admissible/consistent heuristic</td><td>Exponential worst case</td><td>Keeps all generated nodes</td><td>Not assigned</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small text-secondary mb-0"><span class="mono">b</span> branching factor, <span class="mono">d</span>
+        depth of the shallowest solution, <span class="mono">m</span> maximum depth of the search tree,
+        <span class="mono">&ell;</span> depth limit. Source: S. Russell and P. Norvig, <em>Artificial Intelligence: A
+        Modern Approach</em>, 4th ed., Ch. 3.</p>
+    </div>
+
+    <div class="paper-card mt-4">
+      <h2 class="card-heading">C. Heuristic values of the last puzzle (for reference only)</h2>
+      <p class="hint">BFS does not use heuristics. These two values are shown only to connect BFS's exact answer to the
+        heuristics that GBFS and A* would use: an admissible heuristic must never be larger than the true shortest
+        distance, which BFS gives us.</p>
+      <div id="heuristicBox" class="text-secondary small">Solve a puzzle first.</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container d-flex flex-wrap justify-content-between gap-2 small">
+    <span>AI Digital Assignment &middot; <span id="footerName">Nikhila Abdul Salam</span> &middot; 24BCE2690</span>
+    <span>BFS implemented from scratch in JavaScript &middot; UI uses Bootstrap 5 (MIT)</span>
+  </div>
+</footer>
+
+<script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/puzzle.js"></script>
+<script src="js/bfs.js"></script>
+<script src="js/visualization.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
